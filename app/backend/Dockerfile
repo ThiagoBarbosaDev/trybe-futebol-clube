@@ -3,4 +3,4 @@ WORKDIR /app-backend
 EXPOSE 3001
 COPY . .
 RUN npm ci
-ENTRYPOINT [ "npm", "start" ]
+CMD ["npm", "start"]
