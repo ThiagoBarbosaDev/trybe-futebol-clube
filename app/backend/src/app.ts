@@ -1,4 +1,6 @@
 import * as express from 'express';
+import { loginRouter } from './routes';
+import CustomError from './utils/CustomError';
 
 class App {
   public app: express.Express;
@@ -10,6 +12,15 @@ class App {
 
     // Não remover essa rota
     this.app.get('/', (req, res) => res.json({ ok: true }));
+    this.app.use('/login', loginRouter);
+    this.app.use((
+      error: CustomError,
+      _req: express.Request,
+      res: express.Response,
+      _next: express.NextFunction,
+    ) => {
+      res.status(error.status).json({ message: error.message });
+    });
   }
 
   private config():void {
