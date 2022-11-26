@@ -20,7 +20,7 @@ export default class LoginService {
   ) {
     switch (errorCode) {
       case 'any.required': throw new CustomError('All fields must be filled', 400);
-      default: throw new CustomError('Incorrect email or password', 401);
+      default: throw new CustomError('Incorrect email or password', 400);
     }
   }
 
