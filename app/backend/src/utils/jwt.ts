@@ -28,4 +28,10 @@ export default class HandleJWT {
       throw new CustomError('Invalid token', 401);
     }
   };
+
+  static verifyRole = (token:string):string => {
+    if (!token) { throw new CustomError('Token not found', 401); }
+    const { email } = verify(token, process.env.JWT_SECRET as string) as Record<string, string>;
+    return email;
+  };
 }

@@ -12,7 +12,7 @@ export default class LoginService {
   };
 
   private findUserData = async (email:string):Promise<UsersModel> => {
-    const userData = await UsersModel.findOne({ where: { email} });
+    const userData = await UsersModel.findOne({ where: { email } });
     return userData as UsersModel;
   };
 
@@ -31,5 +31,12 @@ export default class LoginService {
     this.authenticateUser(bodyParams, userData);
     const token = this.authorizeUser(bodyParams);
     return token;
+  };
+
+  validate = async (authToken:string):Promise<Record<string, string>> => {
+    // todo: implement authToken validation
+    const email = HandleJWT.verifyRole(authToken);
+    const { role } = await this.findUserData(email);
+    return { role };
   };
 }
