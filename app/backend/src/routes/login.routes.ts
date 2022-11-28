@@ -1,12 +1,10 @@
 import { Router } from 'express';
-import UsersModel from '../database/models/UsersModel';
 import { LoginService } from '../services';
 import { LoginController } from '../controllers';
 
 const loginRouter = Router();
 
-const loginModel = new UsersModel();
-const loginService = new LoginService(loginModel);
+const loginService = new LoginService();
 const loginController = new LoginController(loginService);
 
 loginRouter.route('/')

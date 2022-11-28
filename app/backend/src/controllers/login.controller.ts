@@ -6,10 +6,9 @@ export default class LoginController {
     this.loginService = loginService;
   }
 
-  login(req:Request, res:Response): void {
+  async login(req:Request, res:Response): Promise<void> {
     const bodyParams = req.body;
-    this.loginService.login(bodyParams);
-    // LoginService.login(bodyParams);
-    res.status(200).json({ message: 'token' });
+    const token = await this.loginService.login(bodyParams);
+    res.status(200).json({ token });
   }
 }

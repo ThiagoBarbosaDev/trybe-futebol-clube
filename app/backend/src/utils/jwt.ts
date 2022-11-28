@@ -5,7 +5,7 @@ import CustomError from './CustomError';
 import 'dotenv/config';
 
 export default class HandleJWT {
-  createToken = (data: ILoginBody) => {
+  static createToken = (data: ILoginBody) => {
     const token = sign(data, process.env.JWT_SECRET as string, {
       expiresIn: '30d',
       algorithm: 'HS256',
@@ -13,7 +13,11 @@ export default class HandleJWT {
     return token;
   };
 
-  verifyToken = (req: Request & Record<string, string>, _res: Response, next: NextFunction) => {
+  static verifyToken = (
+    req: Request & Record<string, string>,
+    _res: Response,
+    next: NextFunction,
+  ) => {
     const token = req.header('Authorization');
     if (!token) { throw new CustomError('Token not found', 401); }
     try {
