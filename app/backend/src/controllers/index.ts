@@ -1,8 +1,7 @@
 import LoginController from './login.controller';
-
-const placeholder = 'placeholder';
+import TeamsController from './teams.controller';
 
 export {
   LoginController,
-  placeholder,
+  TeamsController,
 };

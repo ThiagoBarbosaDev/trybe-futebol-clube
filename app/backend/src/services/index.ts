@@ -1,8 +1,7 @@
 import LoginService from './login.service';
-
-const placeholder = 'placeholder';
+import TeamsService from './teams.service';
 
 export {
   LoginService,
-  placeholder,
+  TeamsService,
 };

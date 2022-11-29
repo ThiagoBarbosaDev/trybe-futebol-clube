@@ -1,8 +1,7 @@
 import loginRouter from './login.routes';
-
-const placeholder = 'placeholder';
+import teamsRouter from './teams.routes';
 
 export {
   loginRouter,
-  placeholder,
+  teamsRouter,
 };

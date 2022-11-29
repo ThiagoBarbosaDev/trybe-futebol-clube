@@ -1,6 +1,6 @@
 import * as express from 'express';
 import 'express-async-errors';
-import { loginRouter } from './routes';
+import { loginRouter, teamsRouter } from './routes';
 import CustomError from './utils/CustomError';
 
 class App {
@@ -14,6 +14,7 @@ class App {
     // Não remover essa rota
     this.app.get('/', (req, res) => res.json({ ok: true }));
     this.app.use('/login', loginRouter);
+    this.app.use('/teams', teamsRouter);
     this.app.use((
       error: CustomError,
       _req: express.Request,
