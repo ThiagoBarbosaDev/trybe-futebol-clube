@@ -16,6 +16,7 @@ class App {
     this.app.use('/login', loginRouter);
     this.app.use('/teams', teamsRouter);
     this.app.use('/matches', matchesRouter);
+    this.app.use('/leaderboard', matchesRouter);
     this.app.use((
       error: CustomError,
       _req: express.Request,
