@@ -1,6 +1,6 @@
 import * as express from 'express';
 import 'express-async-errors';
-import { loginRouter, matchesRouter, teamsRouter } from './routes';
+import { leaderBoardRouter, loginRouter, matchesRouter, teamsRouter } from './routes';
 import CustomError from './utils/CustomError';
 
 class App {
@@ -16,7 +16,7 @@ class App {
     this.app.use('/login', loginRouter);
     this.app.use('/teams', teamsRouter);
     this.app.use('/matches', matchesRouter);
-    this.app.use('/leaderboard', matchesRouter);
+    this.app.use('/leaderboard', leaderBoardRouter);
     this.app.use((
       error: CustomError,
       _req: express.Request,

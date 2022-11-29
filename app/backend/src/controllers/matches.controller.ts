@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import HandleJWT from '../utils/jwt';
 import { MatchesService } from '../services';
 
 export default class matchesController {
@@ -7,17 +8,31 @@ export default class matchesController {
   }
 
   private handleFilterByProgress = async (res:Response, isInProgress:string):Promise<Response> => {
+    console.log('entrei');
     const response = await this.matchesService.findInProgress(isInProgress);
     return res.status(200).json(response);
   };
 
-  async findAll(req:Request, res:Response): Promise<Response<void, Record<string, any>>> {
+  async findAll(req:Request, res:Response): Promise<Response> {
     const { inProgress: isInProgress } = req.query;
-    const isFilteringByInProgress = isInProgress !== undefined;
-    if (isFilteringByInProgress) {
+    if (isInProgress) {
       return this.handleFilterByProgress(res, isInProgress as string);
     }
     const response = await this.matchesService.findAll();
+    return res.status(200).json(response);
+  }
+
+  async insert(req:Request, res:Response): Promise<Response> {
+    const { body: postPayload, headers: { authorization: token } } = req;
+    HandleJWT.authenticate(token);
+    const response = await this.matchesService.insert(postPayload);
+    return res.status(201).json(response);
+  }
+
+  async finishMatch(req:Request, res:Response): Promise<Response> {
+    const { params: { id }, headers: { authorization: token } } = req;
+    // HandleJWT.authenticate(token);
+    const response = await this.matchesService.finishMatch(id);
     return res.status(200).json(response);
   }
 }
