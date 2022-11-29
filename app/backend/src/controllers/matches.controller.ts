@@ -8,7 +8,7 @@ export default class matchesController {
 
   async findAll(req:Request, res:Response): Promise<void> {
     // const bodyParams = req.body;
-    const response = await this.matchesService.foobar();
-    res.status(200).json({ message: response });
+    const response = await this.matchesService.findAll();
+    res.status(200).json(response);
   }
 }
