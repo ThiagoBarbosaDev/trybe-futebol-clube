@@ -6,9 +6,18 @@ export default class matchesController {
     this.matchesService = matchesService;
   }
 
-  async findAll(req:Request, res:Response): Promise<void> {
-    // const bodyParams = req.body;
+  private handleFilterByProgress = async (res:Response, isInProgress:string):Promise<Response> => {
+    const response = await this.matchesService.findInProgress(isInProgress);
+    return res.status(200).json(response);
+  };
+
+  async findAll(req:Request, res:Response): Promise<Response<void, Record<string, any>>> {
+    const { inProgress: isInProgress } = req.query;
+    const isFilteringByInProgress = isInProgress !== undefined;
+    if (isFilteringByInProgress) {
+      return this.handleFilterByProgress(res, isInProgress as string);
+    }
     const response = await this.matchesService.findAll();
-    res.status(200).json(response);
+    return res.status(200).json(response);
   }
 }
