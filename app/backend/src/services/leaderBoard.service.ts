@@ -68,7 +68,7 @@ export default class LeaderBoardService {
     leaderBoardData:IMatchesResponse[],
   ):void => {
     leaderBoardData
-      .filter((match) => match.teamAway.teamName === teamName)
+      .filter((match) => match.teamHome.teamName === teamName)
       .forEach((match) => {
         if (match.homeTeamGoals > match.awayTeamGoals) {
           this.totalVictories += 1; this.totalPoints += 3;
