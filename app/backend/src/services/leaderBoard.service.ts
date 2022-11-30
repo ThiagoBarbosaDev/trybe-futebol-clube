@@ -32,10 +32,17 @@ export default class LeaderBoardService {
     const leaderBoardData = teamData.map((team) => team.toJSON()) as IMatchesResponse[];
     const nameList = leaderBoardData.map((matchData) => matchData.teamHome.teamName);
     const uniqueNameSet = new Set(nameList);
-    console.log([...uniqueNameSet].length);
     [...uniqueNameSet]
       .forEach((teamName) => this.handleLeaderBoardCalculation(teamName, leaderBoardData));
-    return this.data;
+    this.data.sort((a, b) => b.totalPoints - a.totalPoints
+      || b.goalsBalance - a.goalsBalance
+      || b.goalsFavor - a.goalsFavor
+      || a.goalsOwn - b.goalsOwn);
+    console.log('FINDHOME');
+    console.table(this.data);
+    const response = [...this.data];
+    this.data = [];
+    return response;
   }
 
   handleLeaderBoardCalculation = (
@@ -52,7 +59,6 @@ export default class LeaderBoardService {
         } else (this.totalLosses += 1);
         this.goalsFavor += match.homeTeamGoals;
         this.goalsOwn += match.awayTeamGoals;
-        this.goalsBalance = (match.homeTeamGoals + match.awayTeamGoals);
         this.totalGames += 1;
       });
     this.setData(teamName);
@@ -69,7 +75,7 @@ export default class LeaderBoardService {
       totalLosses: this.totalLosses,
       goalsFavor: this.goalsFavor,
       goalsOwn: this.goalsOwn,
-      goalsBalance: this.goalsBalance,
+      goalsBalance: this.goalsFavor - this.goalsOwn,
       efficiency: Number(((this.totalPoints / (this.totalGames * 3)) * 100).toFixed(2)),
     }];
   }
