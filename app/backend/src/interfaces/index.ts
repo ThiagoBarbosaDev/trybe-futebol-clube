@@ -17,6 +17,10 @@ export interface IMatchesResponse extends IMatchesPost {
     id: number;
     teamName: string;
   }
+  teamAway: {
+    id: number;
+    teamName: string;
+  }
 }
 
 export interface ILeaderBoardResponse {

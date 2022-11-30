@@ -27,17 +27,20 @@ export default class LeaderBoardService {
     this.data = [];
   }
 
+  sortTeams = (a:ILeaderBoardResponse, b:ILeaderBoardResponse) =>
+    b.totalPoints - a.totalPoints
+    || b.goalsBalance - a.goalsBalance
+    || b.goalsFavor - a.goalsFavor
+    || a.goalsOwn - b.goalsOwn;
+
   async findHomeLeaderBoard():Promise<ILeaderBoardResponse[]> {
     const teamData = await this.matchesService.findHomeOrAwayData('teamHome');
     const leaderBoardData = teamData.map((team) => team.toJSON()) as IMatchesResponse[];
     const nameList = leaderBoardData.map((matchData) => matchData.teamHome.teamName);
     const uniqueNameSet = new Set(nameList);
     [...uniqueNameSet]
-      .forEach((teamName) => this.handleLeaderBoardCalculation(teamName, leaderBoardData));
-    this.data.sort((a, b) => b.totalPoints - a.totalPoints
-      || b.goalsBalance - a.goalsBalance
-      || b.goalsFavor - a.goalsFavor
-      || a.goalsOwn - b.goalsOwn);
+      .forEach((teamName) => this.handleHomeLeaderBoardCalculation(teamName, leaderBoardData));
+    this.data.sort(this.sortTeams);
     console.log('FINDHOME');
     console.table(this.data);
     const response = [...this.data];
@@ -45,12 +48,27 @@ export default class LeaderBoardService {
     return response;
   }
 
-  handleLeaderBoardCalculation = (
+  async findAwayLeaderBoard():Promise<ILeaderBoardResponse[]> {
+    const teamData = await this.matchesService.findHomeOrAwayData('teamAway');
+    const leaderBoardData = teamData.map((team) => team.toJSON()) as IMatchesResponse[];
+    const nameList = leaderBoardData.map((matchData) => matchData.teamAway.teamName);
+    const uniqueNameSet = new Set(nameList);
+    [...uniqueNameSet]
+      .forEach((teamName) => this.handleAwayLeaderBoardCalculation(teamName, leaderBoardData));
+    this.data.sort(this.sortTeams);
+    console.log('FINDAWAY');
+    console.table(this.data);
+    const response = [...this.data];
+    this.data = [];
+    return response;
+  }
+
+  handleHomeLeaderBoardCalculation = (
     teamName:string,
     leaderBoardData:IMatchesResponse[],
   ):void => {
     leaderBoardData
-      .filter((match) => match.teamHome.teamName === teamName)
+      .filter((match) => match.teamAway.teamName === teamName)
       .forEach((match) => {
         if (match.homeTeamGoals > match.awayTeamGoals) {
           this.totalVictories += 1; this.totalPoints += 3;
@@ -59,6 +77,26 @@ export default class LeaderBoardService {
         } else (this.totalLosses += 1);
         this.goalsFavor += match.homeTeamGoals;
         this.goalsOwn += match.awayTeamGoals;
+        this.totalGames += 1;
+      });
+    this.setData(teamName);
+    this.resetState();
+  };
+
+  handleAwayLeaderBoardCalculation = (
+    teamName:string,
+    leaderBoardData:IMatchesResponse[],
+  ):void => {
+    leaderBoardData
+      .filter((match) => match.teamAway.teamName === teamName)
+      .forEach((match) => {
+        if (match.homeTeamGoals < match.awayTeamGoals) {
+          this.totalVictories += 1; this.totalPoints += 3;
+        } else if (match.homeTeamGoals === match.awayTeamGoals) {
+          this.totalDraws += 1; this.totalPoints += 1;
+        } else (this.totalLosses += 1);
+        this.goalsFavor += match.awayTeamGoals;
+        this.goalsOwn += match.homeTeamGoals;
         this.totalGames += 1;
       });
     this.setData(teamName);

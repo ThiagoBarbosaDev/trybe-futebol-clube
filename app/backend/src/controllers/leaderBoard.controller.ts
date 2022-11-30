@@ -10,7 +10,11 @@ export default class LeaderBoardController {
   // async findHomeLeaderBoard(req:Request, res:Response): Promise<LeaderBoardResponse> {
   async findHomeLeaderBoard(req:Request, res:Response): Promise<any | void> {
     const response = await this.leaderBoardService.findHomeLeaderBoard();
-    console.log('CONTROLLER');
+    res.status(200).json(response);
+  }
+
+  async findAwayLeaderBoard(req:Request, res:Response): Promise<any | void> {
+    const response = await this.leaderBoardService.findAwayLeaderBoard();
     console.table(response);
     res.status(200).json(response);
   }
