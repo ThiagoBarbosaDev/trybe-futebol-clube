@@ -35,4 +35,11 @@ export default class matchesController {
     const response = await this.matchesService.finishMatch(id);
     return res.status(200).json(response);
   }
+
+  async update(req:Request, res:Response): Promise<Response> {
+    const { params: { id }, body: postPayload } = req;
+    // HandleJWT.authenticate(token);
+    const response = await this.matchesService.update(id, postPayload);
+    return res.status(200).json(response);
+  }
 }

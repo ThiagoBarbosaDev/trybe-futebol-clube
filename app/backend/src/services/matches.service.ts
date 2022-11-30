@@ -21,6 +21,13 @@ export default class MatchesService {
     return response;
   };
 
+  findHomeOrAwayData = async (homeOrAway:('teamHome' | 'teamAway')):Promise<MatchesModel[]> => {
+    const response = await MatchesModel.findAll(
+      { include: [homeOrAway], where: { inProgress: false } },
+    );
+    return response;
+  };
+
   insert = async (postPayload:IMatchesPost):Promise<IMatchesPost> => {
     await this.validateIds(postPayload);
     this.validateBusinessLogic(postPayload);
@@ -49,5 +56,10 @@ export default class MatchesService {
   finishMatch = async (id:string):Promise<Record<string, string>> => {
     await MatchesModel.update({ inProgress: false }, { where: { id } });
     return { message: 'finished' };
+  };
+
+  update = async (id:string, payload:Record<string, string>):Promise<string> => {
+    await MatchesModel.update(payload, { where: { id } });
+    return 'success!';
   };
 }
