@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-// import { LeaderBoardResponse } from '../interfaces';
 import { LeaderBoardService } from '../services';
 
 export default class LeaderBoardController {
@@ -7,14 +6,19 @@ export default class LeaderBoardController {
     this.leaderBoardService = leaderBoardService;
   }
 
-  // async findHomeLeaderBoard(req:Request, res:Response): Promise<LeaderBoardResponse> {
-  async findHomeLeaderBoard(req:Request, res:Response): Promise<any | void> {
+  async findHomeLeaderBoard(req:Request, res:Response): Promise<void> {
     const response = await this.leaderBoardService.findHomeLeaderBoard();
     res.status(200).json(response);
   }
 
-  async findAwayLeaderBoard(req:Request, res:Response): Promise<any | void> {
+  async findAwayLeaderBoard(req:Request, res:Response): Promise<void> {
     const response = await this.leaderBoardService.findAwayLeaderBoard();
+    console.table(response);
+    res.status(200).json(response);
+  }
+
+  async findCompleteLeaderBoard(req:Request, res:Response): Promise<void> {
+    const response = await this.leaderBoardService.findCompleteLeaderBoard();
     console.table(response);
     res.status(200).json(response);
   }

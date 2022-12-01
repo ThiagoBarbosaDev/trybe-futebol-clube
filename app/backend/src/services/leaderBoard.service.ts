@@ -48,6 +48,22 @@ export default class LeaderBoardService {
     return response;
   }
 
+  // async findCompleteLeaderBoard():Promise<ILeaderBoardResponse[]> {
+  async findCompleteLeaderBoard():Promise<ILeaderBoardResponse[]> {
+    const teamData = await this.matchesService.findLeaderBoardData();
+    const leaderBoardData = teamData.map((team) => team.toJSON()) as IMatchesResponse[];
+    const nameList = leaderBoardData.map((matchData) => matchData.teamHome.teamName);
+    const uniqueNameSet = new Set(nameList);
+    [...uniqueNameSet]
+      .forEach((teamName) => this.handleCompleteLeaderBoardCalculation(teamName, leaderBoardData));
+    this.data.sort(this.sortTeams);
+    console.log('COMPLETELEADERBOARD');
+    console.table(this.data);
+    const response = [...this.data];
+    this.data = [];
+    return response;
+  }
+
   async findAwayLeaderBoard():Promise<ILeaderBoardResponse[]> {
     const teamData = await this.matchesService.findHomeOrAwayData('teamAway');
     const leaderBoardData = teamData.map((team) => team.toJSON()) as IMatchesResponse[];
@@ -69,18 +85,31 @@ export default class LeaderBoardService {
   ):void => {
     leaderBoardData
       .filter((match) => match.teamHome.teamName === teamName)
-      .forEach((match) => {
-        if (match.homeTeamGoals > match.awayTeamGoals) {
-          this.totalVictories += 1; this.totalPoints += 3;
-        } else if (match.homeTeamGoals === match.awayTeamGoals) {
-          this.totalDraws += 1; this.totalPoints += 1;
-        } else (this.totalLosses += 1);
-        this.goalsFavor += match.homeTeamGoals;
-        this.goalsOwn += match.awayTeamGoals;
-        this.totalGames += 1;
-      });
+      .forEach(this.handleHomeMatchCalculation);
     this.setData(teamName);
     this.resetState();
+  };
+
+  handleHomeMatchCalculation = (match:IMatchesResponse) => {
+    if (match.homeTeamGoals > match.awayTeamGoals) {
+      this.totalVictories += 1; this.totalPoints += 3;
+    } else if (match.homeTeamGoals === match.awayTeamGoals) {
+      this.totalDraws += 1; this.totalPoints += 1;
+    } else (this.totalLosses += 1);
+    this.goalsFavor += match.homeTeamGoals;
+    this.goalsOwn += match.awayTeamGoals;
+    this.totalGames += 1;
+  };
+
+  handleAwayMatchCalculation = (match:IMatchesResponse) => {
+    if (match.homeTeamGoals < match.awayTeamGoals) {
+      this.totalVictories += 1; this.totalPoints += 3;
+    } else if (match.homeTeamGoals === match.awayTeamGoals) {
+      this.totalDraws += 1; this.totalPoints += 1;
+    } else (this.totalLosses += 1);
+    this.goalsFavor += match.awayTeamGoals;
+    this.goalsOwn += match.homeTeamGoals;
+    this.totalGames += 1;
   };
 
   handleAwayLeaderBoardCalculation = (
@@ -89,15 +118,23 @@ export default class LeaderBoardService {
   ):void => {
     leaderBoardData
       .filter((match) => match.teamAway.teamName === teamName)
+      .forEach(this.handleAwayMatchCalculation);
+    this.setData(teamName);
+    this.resetState();
+  };
+
+  handleCompleteLeaderBoardCalculation = (
+    teamName:string,
+    leaderBoardData:IMatchesResponse[],
+  ):void => {
+    leaderBoardData
+      .filter((match) => match.teamAway.teamName === teamName
+      || match.teamHome.teamName === teamName)
       .forEach((match) => {
-        if (match.homeTeamGoals < match.awayTeamGoals) {
-          this.totalVictories += 1; this.totalPoints += 3;
-        } else if (match.homeTeamGoals === match.awayTeamGoals) {
-          this.totalDraws += 1; this.totalPoints += 1;
-        } else (this.totalLosses += 1);
-        this.goalsFavor += match.awayTeamGoals;
-        this.goalsOwn += match.homeTeamGoals;
-        this.totalGames += 1;
+        const isTeamHome = match.teamHome.teamName === teamName;
+        return isTeamHome
+          ? this.handleHomeMatchCalculation(match)
+          : this.handleAwayMatchCalculation(match);
       });
     this.setData(teamName);
     this.resetState();
@@ -129,19 +166,6 @@ export default class LeaderBoardService {
     this.goalsBalance = 0;
   }
 
-  // .reduce((acc, cv) => ({
-  //   name: teamName,
-  //   totalPoints: acc.totalPoints + this.handlePoints(cv.homeTeamGoals, cv.awayTeamGoals),
-  //   totalGames: acc.totalGames + 1,
-  //   totalVictories: acc.totalVictories + this.handlePoints(cv.homeTeamGoals, cv.awayTeamGoals),
-  //   totalDraws: acc.totalDraws + this.handleDraw(cv.homeTeamGoals, cv.awayTeamGoals),
-  //   totalLosses: acc.totalLosses + this.handleDefeat(cv.homeTeamGoals, cv.awayTeamGoals),
-  //   goalsFavor: acc.goalsFavor + cv.homeTeamGoals,
-  //   goalsOwn: acc.goalsOwn + cv.awayTeamGoals,
-  //   goalsBalance: 0 + cv.awayTeamGoals + cv.homeTeamGoals,
-  //   efficiency: (acc.totalPoints + this.handlePoints(cv.homeTeamGoals, cv.awayTeamGoals) / (acc.totalGames)),
-  // }), INITIAL_STATE);
-
   handlePoints = (homeTeamGoals:number, awayTeamGoals:number):number => {
     if (homeTeamGoals > awayTeamGoals) { return 3; }
     if (homeTeamGoals === awayTeamGoals) { return 1; }
@@ -163,40 +187,3 @@ export default class LeaderBoardService {
     awayTeamGoals:number,
   ):number => (homeTeamGoals === awayTeamGoals ? 1 : 0);
 }
-// - `Classificação`: Posição na classificação;
-// - `Time`: Nome do time;
-// - `P`: Total de Pontos;
-// - `J`: Total de Jogos;
-// - `V`: Total de Vitórias;
-// - `E`: Total de Empates;
-// - `D`: Total de Derrotas;
-// - `GP`: Gols marcados a favor;
-// - `GC`: Gols sofridos;
-// - `SG`: Saldo total de gols;
-// - `%`: Aproveitamento do time.
-
-// const leaderboard = {
-//   "name": "Palmeiras",
-//   "totalPoints": 13,
-//   "totalGames": 5,
-//   "totalVictories": 4,
-//   "totalDraws": 1,
-//   "totalLosses": 0,
-//   "goalsFavor": 17,
-//   "goalsOwn": 5,
-//   "goalsBalance": 12,
-//   "efficiency": 86.67
-// },
-
-// return [data].reduce((acc:Record<string, string>, cv) => ({
-//   ...acc,
-// P: 'teste',
-// J: 'teste',
-// V: 'teste',
-// E: 'teste',
-// D: 'teste',
-// GP: 'teste',
-// GC: 'teste',
-// SG: 'teste',
-// '%': 'teste',
-// }), {});

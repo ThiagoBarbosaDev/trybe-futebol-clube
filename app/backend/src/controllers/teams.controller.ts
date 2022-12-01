@@ -7,7 +7,6 @@ export default class TeamsController {
   }
 
   async findAll(req:Request, res:Response): Promise<void> {
-    // const bodyParams = req.body;
     const response = await this.teamsService.findAll();
     res.status(200).json(response);
   }

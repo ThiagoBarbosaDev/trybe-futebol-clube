@@ -28,6 +28,13 @@ export default class MatchesService {
     return response;
   };
 
+  findLeaderBoardData = async ():Promise<MatchesModel[]> => {
+    const response = await MatchesModel.findAll(
+      { include: ['teamHome', 'teamAway'], where: { inProgress: false } },
+    );
+    return response;
+  };
+
   insert = async (postPayload:IMatchesPost):Promise<IMatchesPost> => {
     await this.validateIds(postPayload);
     this.validateBusinessLogic(postPayload);

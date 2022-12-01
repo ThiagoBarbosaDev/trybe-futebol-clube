@@ -23,7 +23,6 @@ class App {
       res: express.Response,
       _next: express.NextFunction,
     ) => {
-      console.log(error);
       res.status(error.status).json({ message: error.message });
     });
   }

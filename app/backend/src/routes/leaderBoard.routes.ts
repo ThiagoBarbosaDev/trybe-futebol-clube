@@ -8,6 +8,8 @@ const matchesService = new MatchesService();
 const leaderBoardService = new LeaderBoardService(matchesService);
 const leaderBoardController = new LeaderBoardController(leaderBoardService);
 
+leaderBoardRouter.route('/')
+  .get((req, res) => leaderBoardController.findCompleteLeaderBoard(req, res));
 leaderBoardRouter.route('/home')
   .get((req, res) => leaderBoardController.findHomeLeaderBoard(req, res));
 leaderBoardRouter.route('/away')
