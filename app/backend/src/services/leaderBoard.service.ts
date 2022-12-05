@@ -41,14 +41,11 @@ export default class LeaderBoardService {
     [...uniqueNameSet]
       .forEach((teamName) => this.handleHomeLeaderBoardCalculation(teamName, leaderBoardData));
     this.data.sort(this.sortTeams);
-    console.log('FINDHOME');
-    console.table(this.data);
     const response = [...this.data];
     this.data = [];
     return response;
   }
 
-  // async findCompleteLeaderBoard():Promise<ILeaderBoardResponse[]> {
   async findCompleteLeaderBoard():Promise<ILeaderBoardResponse[]> {
     const teamData = await this.matchesService.findLeaderBoardData();
     const leaderBoardData = teamData.map((team) => team.toJSON()) as IMatchesResponse[];
@@ -57,8 +54,6 @@ export default class LeaderBoardService {
     [...uniqueNameSet]
       .forEach((teamName) => this.handleCompleteLeaderBoardCalculation(teamName, leaderBoardData));
     this.data.sort(this.sortTeams);
-    console.log('COMPLETELEADERBOARD');
-    console.table(this.data);
     const response = [...this.data];
     this.data = [];
     return response;
@@ -72,8 +67,6 @@ export default class LeaderBoardService {
     [...uniqueNameSet]
       .forEach((teamName) => this.handleAwayLeaderBoardCalculation(teamName, leaderBoardData));
     this.data.sort(this.sortTeams);
-    console.log('FINDAWAY');
-    console.table(this.data);
     const response = [...this.data];
     this.data = [];
     return response;

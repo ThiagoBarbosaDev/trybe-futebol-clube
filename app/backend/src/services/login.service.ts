@@ -16,10 +16,10 @@ export default class LoginService {
     return userData as UsersModel;
   };
 
-  authenticateUser = (bodyParams:ILoginBody, userData: UsersModel):void => {
-    const isEmailInvalid = !userData;
+  authenticateUser = async (bodyParams:ILoginBody, userData: UsersModel):Promise<void> => {
+    const isEmailInvalid = !userData.email;
     if (isEmailInvalid) { throw new CustomError('Incorrect email or password', 401); }
-    const isPasswordInvalid = !compareSync(bodyParams.password, userData.dataValues.password);
+    const isPasswordInvalid = await !compareSync(bodyParams.password, userData.password);
     if (isPasswordInvalid) { throw new CustomError('Incorrect email or password', 401); }
   };
 
@@ -28,7 +28,7 @@ export default class LoginService {
   login = async (bodyParams: ILoginBody): Promise<string> => {
     this.validateBody(bodyParams);
     const userData = await this.findUserData(bodyParams.email);
-    this.authenticateUser(bodyParams, userData);
+    await this.authenticateUser(bodyParams, userData);
     const token = this.authorizeUser(bodyParams);
     return token;
   };
