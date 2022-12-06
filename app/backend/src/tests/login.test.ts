@@ -13,7 +13,7 @@ chai.use(chaiHttp);
 const { app } = new App();
 const { expect } = chai;
 
-describe('A rota /login...', () => {
+describe('A rota /login do verbo POST...', () => {
   let response: Response;
 
   beforeEach(async () => {
@@ -53,7 +53,7 @@ describe('A rota /login...', () => {
     expect(response.text).to.not.have.property('token');
   });
 });
-describe('A rota /login/validate...', () => {
+describe('A rota /login/validate do verbo GET...', () => {
   let response: Response;
 
   beforeEach(async () => {    
