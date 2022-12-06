@@ -1,4 +1,4 @@
-import { compareSync } from 'bcryptjs';
+import { compare, compareSync } from 'bcryptjs';
 import { ILoginBody } from '../interfaces';
 import UsersModel from '../database/models/UsersModel';
 import CustomError from '../utils/CustomError';
@@ -17,7 +17,7 @@ export default class LoginService {
   };
 
   authenticateUser = async (bodyParams:ILoginBody, userData: UsersModel):Promise<void> => {
-    const isEmailInvalid = !userData.email;
+    const isEmailInvalid = !userData?.email;
     if (isEmailInvalid) { throw new CustomError('Incorrect email or password', 401); }
     const isPasswordInvalid = await !compareSync(bodyParams.password, userData.password);
     if (isPasswordInvalid) { throw new CustomError('Incorrect email or password', 401); }
