@@ -66,7 +66,7 @@ describe('A rota /login/validate do verbo GET...', () => {
   it('deve funcionar corretamente', async () => {
     response = await chai.request(app).post('/login').send(loginMocks.validAdmin);
     const authorization = response.body.token;
-    response = await chai.request(app).get('/login/validate').set({ authorization }).send(loginMocks.validAdmin)
+    response = await chai.request(app).get('/login/validate').set({ authorization })
     expect(response.status).to.be.equal(200);
     expect(response.body).to.have.property('role').to.contain('admin');
   });

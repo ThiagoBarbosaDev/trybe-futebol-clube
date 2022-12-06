@@ -33,6 +33,7 @@ export default class HandleJWT {
   };
 
   static authenticate = (token: token) => {
+    console.log('auth');
     if (!token) { throw new CustomError(TOKEN_NOT_FOUND_ERROR_MESSAGE, 401); }
     try {
       verify(token, process.env.JWT_SECRET as string) as JwtPayload;

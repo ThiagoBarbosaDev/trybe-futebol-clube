@@ -39,7 +39,7 @@ export default class MatchesService {
     await this.validateIds(postPayload);
     this.validateBusinessLogic(postPayload);
     const response = await MatchesModel.create({ ...postPayload, inProgress: true });
-    return response.toJSON();
+    return response;
   };
 
   private validateIds = async (postPayload:IMatchesPost):Promise<void> => {

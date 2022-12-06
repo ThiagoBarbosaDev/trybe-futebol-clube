@@ -19,6 +19,7 @@ describe('A rota /teams...', () => {
 
   beforeEach(async () => {
     sinon.stub(TeamsModel, 'findAll').resolves(teamsMocks.findAllTeamsMock as TeamsModel[])
+    sinon.stub(TeamsModel, 'findOne').resolves(teamsMocks.findAllTeamsMock[0] as TeamsModel)
   })
 
   afterEach(async () => {
@@ -26,26 +27,13 @@ describe('A rota /teams...', () => {
   });
 
   it('deve funcionar corretamente', async () => {
-    response = await chai.request(app).post('/login').send()
+    response = await chai.request(app).get('/teams');
     expect(response.status).to.be.equal(200);
-    expect(response.body).to.have.property('token');
+    expect(response.body).to.be.deep.equal(teamsMocks.findAllTeamsMock);
+  });
+  it('/id deve funcionar corretamente', async () => {
+    response = await chai.request(app).get('/teams/1');
+    expect(response.status).to.be.equal(200);
+    expect(response.body).to.be.deep.equal(teamsMocks.findAllTeamsMock[0]);
   });
 });
-// describe('A rota /login/validate...', () => {
-//   let response: Response;
-  
-//   beforeEach(async () => {    
-//     sinon.stub(UsersModel, 'findOne').resolves(loginMocks.findOneMock as UsersModel);
-//   })
-//   afterEach(async () => {
-//     sinon.restore()
-//   });
-//   it('deve funcionar corretamente', async () => {
-//     response = await chai.request(app).post('/login').send(loginMocks.validAdmin);
-//     const authorization = response.body.token;
-//     response = await chai.request(app).get('/login/validate').set({ authorization }).send(loginMocks.validAdmin)
-
-//     expect(response.status).to.be.equal(200);
-//     expect(response.body).to.have.property('role').to.contain('admin');
-//   });
-// });

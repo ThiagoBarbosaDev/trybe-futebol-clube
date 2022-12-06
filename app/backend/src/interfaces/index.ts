@@ -1,3 +1,5 @@
+import MatchesModel from '../database/models/MatchesModel';
+
 export interface ILoginBody {
   email: string;
   password: string;
@@ -12,7 +14,7 @@ export interface IMatchesPost {
   inProgress: boolean;
 }
 
-export interface IMatchesResponse extends IMatchesPost {
+export interface IMatchesResponse extends MatchesModel {
   teamHome: {
     id: number;
     teamName: string;
