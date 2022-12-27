@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from 'express';
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
 import { ILoginBody } from '../interfaces';
 import CustomError from './CustomError';
@@ -14,22 +13,6 @@ export default class HandleJWT {
       algorithm: 'HS256',
     });
     return token;
-  };
-
-  static verifyToken = (
-    req: Request & Record<string, string>,
-    _res: Response,
-    next: NextFunction,
-  ) => {
-    const token = req.header('Authorization');
-    if (!token) { throw new CustomError(TOKEN_NOT_FOUND_ERROR_MESSAGE, 401); }
-    try {
-      const decoded = verify(token, process.env.JWT_SECRET as string) as string;
-      req.userData = decoded;
-      next();
-    } catch (error) {
-      throw new CustomError('Token must be a valid token', 401);
-    }
   };
 
   static authenticate = (token: token) => {

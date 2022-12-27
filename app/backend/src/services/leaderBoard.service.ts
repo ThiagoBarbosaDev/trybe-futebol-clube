@@ -155,25 +155,4 @@ export default class LeaderBoardService {
     this.goalsOwn = 0;
     this.goalsBalance = 0;
   }
-
-  handlePoints = (homeTeamGoals:number, awayTeamGoals:number):number => {
-    if (homeTeamGoals > awayTeamGoals) { return 3; }
-    if (homeTeamGoals === awayTeamGoals) { return 1; }
-    return 0;
-  };
-
-  handleVictory = (
-    homeTeamGoals:number,
-    awayTeamGoals:number,
-  ):number => (homeTeamGoals > awayTeamGoals ? 1 : 0);
-
-  handleDefeat = (
-    homeTeamGoals:number,
-    awayTeamGoals:number,
-  ):number => (homeTeamGoals < awayTeamGoals ? 1 : 0);
-
-  handleDraw = (
-    homeTeamGoals:number,
-    awayTeamGoals:number,
-  ):number => (homeTeamGoals === awayTeamGoals ? 1 : 0);
 }
