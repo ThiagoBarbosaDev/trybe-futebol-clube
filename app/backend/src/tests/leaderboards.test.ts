@@ -35,3 +35,33 @@ describe('A rota /leaderboard...', () => {
     expect(response.body).to.be.deep.equal(leaderboardMocks.completeLeaderBoardResponse);
   });
 });
+
+describe('A rota /leaderboard/home...', () => {
+  let response: Response;
+  
+  afterEach(async () => {
+    sinon.restore()
+  });
+
+  it('do verbo GET deve funcionar corretamente', async () => {
+    sinon.stub(MatchesModel, 'findAll').resolves(leaderboardMocks.homeLeaderboardMock as any)
+    response = await chai.request(app).get('/leaderboard/home');
+    expect(response.status).to.be.equal(200);
+    expect(response.body).to.be.deep.equal(leaderboardMocks.homeLeaderboardResponse);
+  });
+});
+
+describe('A rota /leaderboard/away...', () => {
+  let response: Response;
+  
+  afterEach(async () => {
+    sinon.restore()
+  });
+
+  it('do verbo GET deve funcionar corretamente', async () => {
+    sinon.stub(MatchesModel, 'findAll').resolves(leaderboardMocks.awayLeaderboardMock as any)
+    response = await chai.request(app).get('/leaderboard/away');
+    expect(response.status).to.be.equal(200);
+    expect(response.body).to.be.deep.equal(leaderboardMocks.awayLeaderboardResponse);
+  });
+});
