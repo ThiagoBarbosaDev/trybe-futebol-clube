@@ -32,6 +32,7 @@ describe('A rota /matches...', () => {
     expect(response.status).to.be.equal(200);
     expect(response.body).to.be.deep.equal(matchesMocks.findAllMatchesMock);
   });
+
   it('do verbo GET deve funcionar corretamente quando filtrando por partidas inProgress como true', async () => {
     const filteredMatches = matchesMocks.findAllMatchesMock.filter((match) => match.inProgress)
     sinon.stub(MatchesModel, 'findAll').resolves(filteredMatches as unknown as IMatchesResponse[])
@@ -39,13 +40,15 @@ describe('A rota /matches...', () => {
     expect(response.status).to.be.equal(200);
     expect(response.body).to.be.deep.equal(filteredMatches);
   });
+
   it('do verbo GET deve funcionar corretamente quando filtrando por partidas inProgress como false', async () => {
     const filteredMatches = matchesMocks.findAllMatchesMock.filter((match) => !match.inProgress)
     sinon.stub(MatchesModel, 'findAll').resolves(filteredMatches as unknown as IMatchesResponse[])
-    response = await chai.request(app).get('/matches?inProgress=true');
+    response = await chai.request(app).get('/matches?inProgress=false');
     expect(response.status).to.be.equal(200);
     expect(response.body).to.be.deep.equal(filteredMatches);
   });
+
   it('do verbo POST deve funcionar corretamente', async () => {
     sinon.stub(MatchesModel, 'create').resolves(matchesMocks.createMatchesMockResponse as MatchesModel)
     sinon.stub(HandleJWT, 'authenticate');
@@ -58,6 +61,7 @@ describe('A rota /matches...', () => {
     const expectedResponse = { ...matchesMocks.createMatchesMockPayload, inProgress: true }
     expect(response.body).to.be.deep.equal(expectedResponse);
   });
+
   it('do verbo POST deve retornar uma mensagem de erro ao tentar cadastrar um time com id inexistente', async () => {
     sinon.stub(MatchesModel, 'create').resolves(matchesMocks.createMatchesMockResponse as MatchesModel)
     sinon.stub(HandleJWT, 'authenticate');
@@ -69,6 +73,7 @@ describe('A rota /matches...', () => {
     expect(response.status).to.be.equal(404);
     expect(response.body).to.have.property('message').to.contain('There is no team with such id!');
   });
+
   it('do verbo POST deve retornar uma mensagem de error ao não inserir um token valido', async () => {
     sinon.stub(MatchesModel, 'create').resolves(matchesMocks.createMatchesMockResponse as MatchesModel)
     response = await chai
@@ -78,6 +83,7 @@ describe('A rota /matches...', () => {
     expect(response.status).to.be.equal(401);
     expect(response.body).to.have.property('message').to.contain('Token not found');
   });
+
   it('do verbo POST deve retornar uma mensagem de error ao não inserir um token valido', async () => {
     sinon.stub(MatchesModel, 'create').resolves(matchesMocks.createMatchesMockResponse as MatchesModel)
     response = await chai
@@ -88,7 +94,28 @@ describe('A rota /matches...', () => {
     expect(response.status).to.be.equal(401);
     expect(response.body).to.have.property('message').to.contain('Token must be a valid token');
   });
-  it('do verbo POST deve retornar uma mensagem de error ao não inserir um token valido', async () => {
+
+  it('do verbo PATCH deve funcionar corretamente', async () => {
+    sinon.stub(MatchesModel, 'update');
+    sinon.stub(HandleJWT, 'authenticate');
+    response = await chai
+      .request(app)
+      .patch('/matches/1')
+      .set('authorization', successfulLoginResponse.token)
+      .send(matchesMocks.updateMatchesMockPayload);
+    expect(response.status).to.be.equal(200);
+    expect(response.body).to.have.property('message').to.contain('success!');
+  });
+});
+
+describe('A rota /matches/:id/finish...', () => {
+  let response: Response;
+  
+  afterEach(async () => {
+    sinon.restore()
+  });
+  
+  it('do verbo PATCH deve funcionar corretamente', async () => {
     sinon.stub(MatchesModel, 'update');
     response = await chai
       .request(app)

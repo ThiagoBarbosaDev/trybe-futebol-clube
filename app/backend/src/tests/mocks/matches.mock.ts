@@ -5,6 +5,11 @@ export const createMatchesMockPayload = {
   awayTeamGoals: 2,
 }
 
+export const updateMatchesMockPayload = {
+  homeTeamGoals: 2,
+  awayTeamGoals: 2,
+}
+
 export const createMatchesMockInvalidPayload = {
   homeTeam: 9999,
   awayTeam: 8,

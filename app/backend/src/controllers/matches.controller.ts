@@ -37,6 +37,6 @@ export default class matchesController {
   async update(req:Request, res:Response): Promise<Response> {
     const { params: { id }, body: postPayload } = req;
     const response = await this.matchesService.update(id, postPayload);
-    return res.status(200).json(response);
+    return res.status(200).json({ message: response });
   }
 }
