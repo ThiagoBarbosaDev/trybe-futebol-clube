@@ -1,10 +1,11 @@
-import { compare, compareSync } from 'bcryptjs';
+import { compareSync } from 'bcryptjs';
 import { ILoginBody } from '../interfaces';
 import UsersModel from '../database/models/UsersModel';
 import CustomError from '../utils/CustomError';
 import { loginSchema } from './schemas/schemas';
 import HandleJWT from '../utils/jwt';
 
+const INCORRECT_EMAIL_OR_PASSWORD = 'Incorrect email or password';
 export default class LoginService {
   private validateBody = (bodyParams: ILoginBody):void => {
     const { error } = loginSchema.validate(bodyParams);
@@ -17,10 +18,9 @@ export default class LoginService {
   };
 
   authenticateUser = async (bodyParams:ILoginBody, userData: UsersModel):Promise<void> => {
-    const isEmailInvalid = !userData?.email;
-    if (isEmailInvalid) { throw new CustomError('Incorrect email or password', 401); }
-    const isPasswordInvalid = await !compareSync(bodyParams.password, userData.password);
-    if (isPasswordInvalid) { throw new CustomError('Incorrect email or password', 401); }
+    if (!userData) { throw new CustomError(INCORRECT_EMAIL_OR_PASSWORD, 401); }
+    const isPasswordInvalid = !compareSync(bodyParams.password, userData.password);
+    if (isPasswordInvalid) { throw new CustomError(INCORRECT_EMAIL_OR_PASSWORD, 401); }
   };
 
   authorizeUser = (bodyParams:ILoginBody):string => HandleJWT.createToken(bodyParams);

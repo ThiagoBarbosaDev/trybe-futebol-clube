@@ -41,9 +41,11 @@ describe('A rota /login do verbo POST...', () => {
     expect(response.text).to.not.have.property('token');
   });
   it('deve retornar mensagem de erro ao inserir um email errado', async () => {
-    response = await chai.request(app).post('/login').send(loginMocks.invalidEmail);
-    expect(response.status).to.be.equal(400);
-    expect(response.body).to.have.property('message').to.contain('All fields must be filled');
+    sinon.restore()
+    sinon.stub(UsersModel, 'findOne').resolves(null);
+    response = await chai.request(app).post('/login').send(loginMocks.wrongEmail);
+    expect(response.status).to.be.equal(401);
+    expect(response.body).to.have.property('message').to.contain('Incorrect email or password');
     expect(response.text).to.not.have.property('token');
   });
   it('deve retornar mensagem de erro fazer uma requisição sem email', async () => {

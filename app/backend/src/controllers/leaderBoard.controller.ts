@@ -13,13 +13,11 @@ export default class LeaderBoardController {
 
   async findAwayLeaderBoard(req:Request, res:Response): Promise<void> {
     const response = await this.leaderBoardService.findAwayLeaderBoard();
-    console.table(response);
     res.status(200).json(response);
   }
 
   async findCompleteLeaderBoard(req:Request, res:Response): Promise<void> {
     const response = await this.leaderBoardService.findCompleteLeaderBoard();
-    console.table(response);
     res.status(200).json(response);
   }
 }
